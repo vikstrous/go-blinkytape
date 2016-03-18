@@ -7,8 +7,6 @@ import (
 	"github.com/tarm/serial"
 )
 
-// TODO: handle partial writes
-
 type Color struct {
 	R byte
 	G byte
@@ -36,7 +34,10 @@ type BlinkyTape struct {
 
 func (b BlinkyTape) SendColors(colors []Color) error {
 	colorCount := len(colors)
-	for _, c := range colors {
+	for i, c := range colors {
+		if i > int(b.ledCount) {
+			break
+		}
 		err := c.WriteTo(b.serial)
 		if err != nil {
 			return err
@@ -48,12 +49,12 @@ func (b BlinkyTape) SendColors(colors []Color) error {
 			return err
 		}
 	}
+	// control character
 	b.Send([]byte{255})
 	return nil
 }
 
 func (b BlinkyTape) Send(data []byte) error {
-	// control character
 	_, err := b.serial.Write(data)
 	return err
 }
