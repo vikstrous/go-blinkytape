@@ -59,6 +59,10 @@ func (b BlinkyTape) Send(data []byte) error {
 	return err
 }
 
+func (b BlinkyTape) Close() error {
+	return b.serial.Close()
+}
+
 func New(name string, ledCount uint) (*BlinkyTape, error) {
 	config := serial.Config{
 		Name:        name,
